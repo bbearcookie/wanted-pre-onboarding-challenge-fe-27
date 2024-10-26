@@ -26,6 +26,7 @@ const typographyVariants = cva('text-foreground', {
       largeText: 'text-lg font-semibold',
       smallText: 'text-sm font-medium leading-none',
       mutedText: 'text-sm text-muted-foreground',
+      error: 'text-sm text-red-500',
     },
   },
   defaultVariants: {
@@ -53,6 +54,7 @@ const variantElementMap: Record<
   lead: 'p',
   mutedText: 'p',
   ul: 'ul',
+  error: 'p',
 };
 
 export interface TypographyProps
