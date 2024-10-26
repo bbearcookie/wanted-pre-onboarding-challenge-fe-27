@@ -1,8 +1,6 @@
 /**
  * forked from: https://github.com/shadcn-ui/ui/pull/363#issuecomment-1659259897
  */
-'use client';
-
 import * as React from 'react';
 import { VariantProps, cva } from 'class-variance-authority';
 import { cn } from '@/utils/shadcn';

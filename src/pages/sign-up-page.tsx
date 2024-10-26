@@ -1,3 +1,4 @@
+import { UsersService } from '@/api/services/users';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -10,14 +11,19 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Typography } from '@/components/ui/typography';
 import { ROUTER_PATHS } from '@/constants/router-paths';
+import { useToast } from '@/hooks/use-toast';
 import { signUpSchema } from '@/schemas/sign-schema';
+import { getApiErrorMessage } from '@/utils/get-api-error';
 import { DevTool } from '@hookform/devtools';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { z } from 'zod';
 
 const SignUpPage = () => {
+  const { toast } = useToast();
+
   const {
     register,
     control,
@@ -30,8 +36,33 @@ const SignUpPage = () => {
     mode: 'all',
   });
 
+  const mutation = useMutation({
+    mutationFn: UsersService.signUp,
+  });
+
   const handleSubmit: SubmitHandler<z.infer<typeof signUpSchema>> = (data) => {
-    console.log(data);
+    mutation.mutate(
+      {
+        data,
+      },
+      {
+        onSuccess: (res) => {
+          toast({
+            title: '회원가입 성공',
+            description: res.message,
+          });
+        },
+        onError: async (error) => {
+          const errorMessage = await getApiErrorMessage(error);
+
+          toast({
+            variant: 'destructive',
+            title: '회원가입 실패',
+            description: errorMessage,
+          });
+        },
+      },
+    );
   };
 
   return (
@@ -53,7 +84,9 @@ const SignUpPage = () => {
                 placeholder="이메일을 입력해주세요."
                 {...register('email')}
               />
-              <Typography variant="error">{errors.email?.message}</Typography>
+              <Typography className="ms-2" variant="error">
+                {errors.email?.message}
+              </Typography>
             </section>
             <div className="h-4" />
             <section className="flex flex-col gap-2">
@@ -70,7 +103,7 @@ const SignUpPage = () => {
                   },
                 })}
               />
-              <Typography variant="error">
+              <Typography className="ms-2" variant="error">
                 {errors.password?.message}
               </Typography>
             </section>
@@ -83,7 +116,7 @@ const SignUpPage = () => {
                 type="password"
                 {...register('passwordConfirm')}
               />
-              <Typography variant="error">
+              <Typography className="ms-2" variant="error">
                 {errors.passwordConfirm?.message}
               </Typography>
             </section>

@@ -17,15 +17,15 @@ export abstract class TodosService {
     return await api.get<GetTodoByIdResponse>(`todos/${params.id}`).json();
   }
 
-  static async createTodo(params: { body: CreateTodoRequest }) {
+  static async createTodo(params: { data: CreateTodoRequest }) {
     return await api
-      .post<CreateTodoResponse>('todos', { json: params.body })
+      .post<CreateTodoResponse>('todos', { json: params.data })
       .json();
   }
 
-  static async updateTodo(params: { id: string; body: UpdateTodoRequest }) {
+  static async updateTodo(params: { id: string; data: UpdateTodoRequest }) {
     return await api
-      .put<UpdateTodoResponse>(`todos/${params.id}`, { json: params.body })
+      .put<UpdateTodoResponse>(`todos/${params.id}`, { json: params.data })
       .json();
   }
 

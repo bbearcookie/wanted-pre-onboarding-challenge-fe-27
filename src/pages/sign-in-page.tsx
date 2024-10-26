@@ -16,8 +16,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { signInSchema } from '@/schemas/sign-schema';
 import { z } from 'zod';
 import { DevTool } from '@hookform/devtools';
+import { UsersService } from '@/api/services/users';
+import { useMutation } from '@tanstack/react-query';
+import { useToast } from '@/hooks/use-toast';
+import { getApiErrorMessage } from '@/utils/get-api-error';
 
 const SignInPage = () => {
+  const { toast } = useToast();
+
   const {
     register,
     control,
@@ -28,8 +34,35 @@ const SignInPage = () => {
     mode: 'all',
   });
 
-  const handleSubmit: SubmitHandler<z.infer<typeof signInSchema>> = (data) => {
-    console.log(data);
+  const mutation = useMutation({
+    mutationFn: UsersService.login,
+  });
+
+  const handleSubmit: SubmitHandler<z.infer<typeof signInSchema>> = async (
+    data,
+  ) => {
+    mutation.mutate(
+      {
+        data,
+      },
+      {
+        onSuccess: (res) => {
+          toast({
+            title: '로그인 성공',
+            description: res.message,
+          });
+        },
+        onError: async (error) => {
+          const errorMessage = await getApiErrorMessage(error);
+
+          toast({
+            variant: 'destructive',
+            title: '로그인 실패',
+            description: errorMessage,
+          });
+        },
+      },
+    );
   };
 
   return (
@@ -51,7 +84,9 @@ const SignInPage = () => {
                 placeholder="이메일을 입력해주세요."
                 {...register('email')}
               />
-              <Typography variant="error">{errors.email?.message}</Typography>
+              <Typography className="ms-2" variant="error">
+                {errors.email?.message}
+              </Typography>
             </section>
             <div className="h-4" />
             <section className="flex flex-col gap-2">
@@ -62,7 +97,7 @@ const SignInPage = () => {
                 type="password"
                 {...register('password')}
               />
-              <Typography variant="error">
+              <Typography className="ms-2" variant="error">
                 {errors.password?.message}
               </Typography>
             </section>
