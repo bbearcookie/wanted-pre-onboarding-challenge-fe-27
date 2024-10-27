@@ -18,11 +18,12 @@ import { DevTool } from '@hookform/devtools';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 
 const SignUpPage = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -51,6 +52,7 @@ const SignUpPage = () => {
             title: '회원가입 성공',
             description: res.message,
           });
+          navigate(ROUTER_PATHS.SIGNIN);
         },
         onError: async (error) => {
           const errorMessage = await getApiErrorMessage(error);
@@ -71,7 +73,7 @@ const SignUpPage = () => {
         <Card className="h-fit w-full max-w-96">
           <CardHeader>
             <CardTitle>
-              <Typography variant="h3" as="h3">
+              <Typography variant="h3" as="p">
                 회원가입
               </Typography>
             </CardTitle>

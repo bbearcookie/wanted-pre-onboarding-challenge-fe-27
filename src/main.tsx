@@ -6,14 +6,17 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import router from '@/router';
 import queryClient from '@/lib/query-client';
 import { Toaster } from '@/components/ui/toaster';
+import { AuthProvier } from '@/providers/auth-provider';
 import './tailwind.css';
 import './main.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-      <ReactQueryDevtools initialIsOpen={false} />
+      <AuthProvier>
+        <RouterProvider router={router} />
+        <ReactQueryDevtools initialIsOpen={false} />
+      </AuthProvier>
       <Toaster />
     </QueryClientProvider>
   </StrictMode>,

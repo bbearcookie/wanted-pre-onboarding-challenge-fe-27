@@ -20,9 +20,11 @@ import { UsersService } from '@/api/services/users';
 import { useMutation } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 import { getApiErrorMessage } from '@/utils/get-api-error';
+import { useAuthContext } from '@/providers/auth-provider';
 
 const SignInPage = () => {
   const { toast } = useToast();
+  const { login } = useAuthContext();
 
   const {
     register,
@@ -51,6 +53,7 @@ const SignInPage = () => {
             title: '로그인 성공',
             description: res.message,
           });
+          login(res.token);
         },
         onError: async (error) => {
           const errorMessage = await getApiErrorMessage(error);
@@ -71,7 +74,7 @@ const SignInPage = () => {
         <Card className="h-fit w-full max-w-96">
           <CardHeader>
             <CardTitle>
-              <Typography variant="h3" as="h3">
+              <Typography variant="h3" as="p">
                 로그인
               </Typography>
             </CardTitle>
