@@ -6,6 +6,7 @@ import OnlyGuestGuard from './outlets/only-guest-guard';
 import AuthGuard from './outlets/auth-guard';
 import TodoPage from './pages/todo-page';
 import IndexGuard from './outlets/index-guard';
+import TodoDetailPage from './pages/todo-detail-page';
 
 const router = createBrowserRouter([
   {
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
       {
         path: ROUTER_PATHS.TODO,
         element: <TodoPage />,
+      },
+      {
+        path: ROUTER_PATHS.TODO_DETAIL(':todoId'),
+        element: <TodoDetailPage />,
       },
     ],
   },

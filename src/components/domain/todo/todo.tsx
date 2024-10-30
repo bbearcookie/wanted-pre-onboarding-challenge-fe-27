@@ -3,6 +3,8 @@ import { Typography } from '@/components/ui/typography';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Todo as TodoModel } from '@/api/dtos/todos';
 import { formatKoreanDate } from '@/utils/format-korean-date';
+import { Link } from 'react-router-dom';
+import { ROUTER_PATHS } from '@/constants/router-paths';
 
 interface TodoProps extends TodoModel {}
 
@@ -24,7 +26,9 @@ const Todo = ({ id, title, content, createdAt, updatedAt }: TodoProps) => {
           <TrashIcon className="h-6 w-6" />
         </div>
         <div className="cursor-pointer rounded-md bg-slate-200 p-1 text-black transition-all hover:bg-slate-300 hover:text-gray-600">
-          <Pencil1Icon className="h-6 w-6" />
+          <Link to={ROUTER_PATHS.TODO_DETAIL(id)}>
+            <Pencil1Icon className="h-6 w-6" />
+          </Link>
         </div>
       </section>
     </article>
