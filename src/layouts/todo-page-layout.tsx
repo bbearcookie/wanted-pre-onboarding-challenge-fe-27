@@ -3,9 +3,11 @@ import { Typography } from '@/components/ui/typography';
 import { ROUTER_PATHS } from '@/constants/router-paths';
 import { useAuthContext } from '@/providers/auth-provider';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Todo as TodoModel } from '@/api/dtos/todos';
 import Todo from '@/components/domain/todo/todo';
+import { PlusIcon } from '@radix-ui/react-icons';
+import { IconButton } from '@/components/ui/icon-button';
 
 interface TodoPageLayoutProps {
   todos: TodoModel[];
@@ -31,6 +33,11 @@ const TodoPageLayout = ({ todos, children }: TodoPageLayoutProps) => {
 
         <div className="mt-8 flex">
           <aside className="flex h-[80svh] w-full max-w-md flex-col gap-4 overflow-y-auto rounded-md bg-gray-100 p-4">
+            <IconButton className="w-fit self-end border-2 border-gray-300 bg-white">
+              <Link to={ROUTER_PATHS.TODO}>
+                <PlusIcon className="h-6 w-6" />
+              </Link>
+            </IconButton>
             {todos.map((todo) => (
               <Todo key={todo.id} {...todo} />
             ))}

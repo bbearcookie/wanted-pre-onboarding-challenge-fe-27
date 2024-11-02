@@ -4,18 +4,17 @@ import { Label } from '@/components/ui/label';
 import { Typography } from '@/components/ui/typography';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
 import Form, { FormProps } from '@/components/feature/form';
 
 interface TodoFormProps extends FormProps<z.infer<typeof todoSchema>> {
-  submitButtonText?: string;
+  children?: React.ReactNode;
 }
 
 const TodoForm = ({
   form,
   onSubmit,
   onError,
-  submitButtonText = '추가',
+  children,
   ...props
 }: TodoFormProps) => {
   const { register } = form;
@@ -40,9 +39,7 @@ const TodoForm = ({
         rows={15}
         {...register('content')}
       />
-      <div className="flex justify-end">
-        <Button>{submitButtonText}</Button>
-      </div>
+      {children}
     </Form>
   );
 };
