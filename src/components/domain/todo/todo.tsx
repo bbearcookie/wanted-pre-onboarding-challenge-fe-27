@@ -9,6 +9,9 @@ import { IconButton } from '@/components/ui/icon-button';
 import { cn } from '@/utils/shadcn';
 import { useDeleteTodoMutation } from '@/api/mutations/useDeleteTodoMutation';
 import { useToast } from '@/hooks/use-toast';
+import useStorageState from 'use-storage-state';
+import { LOCAL_STORAGE_KEYS } from '@/constants/storage-keys';
+import { CheckedState } from '@radix-ui/react-checkbox';
 
 interface TodoProps extends TodoModel {}
 
@@ -16,6 +19,13 @@ const Todo = ({ id, title, content, createdAt, updatedAt }: TodoProps) => {
   const isCurrentTodo = useMatch(ROUTER_PATHS.TODO_DETAIL(id));
   const deleteMutation = useDeleteTodoMutation();
   const { toast } = useToast();
+  const [isChecked, setIsChecked] = useStorageState<CheckedState>(
+    LOCAL_STORAGE_KEYS.IS_CHECKED_TODO(id),
+    {
+      defaultValue: false,
+      storage: localStorage,
+    },
+  );
 
   const handleDelete = () =>
     deleteMutation.mutate(
@@ -39,9 +49,21 @@ const Todo = ({ id, title, content, createdAt, updatedAt }: TodoProps) => {
         isCurrentTodo && 'border-primary',
       )}
     >
-      <Checkbox className="scale-150" />
+      <Checkbox
+        checked={isChecked}
+        onCheckedChange={(isChecked) => setIsChecked(isChecked)}
+        onChange={(e) => {
+          console.log(e);
+        }}
+        className="scale-150"
+      />
       <Link to={ROUTER_PATHS.TODO_DETAIL(id)} className="flex grow flex-col">
-        <Typography variant="largeText">{title}</Typography>
+        <Typography
+          variant="largeText"
+          className={cn(isChecked && 'text-gray-700 line-through')}
+        >
+          {title}
+        </Typography>
         <Typography variant="mutedText">
           작성: {formatKoreanDate(createdAt)}
         </Typography>
