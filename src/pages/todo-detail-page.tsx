@@ -4,6 +4,7 @@ import { todosOptions } from '@/api/query-options/todos';
 import TodoForm from '@/components/domain/todo/todo-form';
 import { Button } from '@/components/ui/button';
 import { ROUTER_PATHS } from '@/constants/router-paths';
+import { useToast } from '@/hooks/use-toast';
 import TodoPageLayout from '@/layouts/todo-page-layout';
 import { todoSchema } from '@/schemas/todo-schema';
 import invariant from '@/utils/invariant';
@@ -15,6 +16,10 @@ import { z } from 'zod';
 
 const TodoDetailPage = () => {
   const { todoId } = useParams() as { todoId: string };
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const updateMutation = useUpdateTodoMutation();
+  const deleteMutation = useDeleteTodoMutation();
 
   const [{ data: todos }, { data: todoDetail }] = useSuspenseQueries({
     queries: [todosOptions.list(), todosOptions.detail(todoId)],
@@ -24,19 +29,38 @@ const TodoDetailPage = () => {
     defaultValues: todoDetail.data,
   });
 
-  const navigate = useNavigate();
-  const updateMutation = useUpdateTodoMutation();
-  const deleteMutation = useDeleteTodoMutation();
-
   const handleDelete = () =>
     deleteMutation.mutate(
       {
         id: todoId,
       },
       {
-        onSuccess: () => navigate(ROUTER_PATHS.TODO),
+        onSuccess: () => {
+          toast({
+            title: '할 일 삭제',
+            description: '할 일을 삭제했습니다.',
+          });
+          navigate(ROUTER_PATHS.TODO);
+        },
       },
     );
+
+  const handleUpdate = (data: z.infer<typeof todoSchema>) => {
+    updateMutation.mutate(
+      {
+        id: todoId,
+        data,
+      },
+      {
+        onSuccess: () => {
+          toast({
+            title: '할 일 수정',
+            description: '할 일을 수정했습니다.',
+          });
+        },
+      },
+    );
+  };
 
   useEffect(() => {
     todoForm.reset(todoDetail.data);
@@ -47,12 +71,7 @@ const TodoDetailPage = () => {
       <TodoForm
         className="flex grow flex-col gap-4 p-4"
         form={todoForm}
-        onSubmit={(data) => {
-          updateMutation.mutate({
-            id: todoId,
-            data,
-          });
-        }}
+        onSubmit={handleUpdate}
         onError={(error) => console.log(error)}
       >
         <section className="flex justify-end gap-2">
