@@ -5,9 +5,9 @@ import { Button } from '@/components/ui/button';
 import { ROUTER_PATHS } from '@/constants/router-paths';
 import TodoPageLayout from '@/layouts/todo-page-layout';
 import { todoSchema } from '@/schemas/todo-schema';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { QueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { LoaderFunctionArgs, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 
 const TodoPage = () => {
@@ -42,5 +42,12 @@ const TodoPage = () => {
     </TodoPageLayout>
   );
 };
+
+export const loader =
+  (queryClient: QueryClient) =>
+  async ({ params }: LoaderFunctionArgs) => {
+    await queryClient.ensureQueryData(todosOptions.list());
+    return null;
+  };
 
 export default TodoPage;

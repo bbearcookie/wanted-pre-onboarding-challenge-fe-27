@@ -6,10 +6,11 @@ import { Button } from '@/components/ui/button';
 import { ROUTER_PATHS } from '@/constants/router-paths';
 import TodoPageLayout from '@/layouts/todo-page-layout';
 import { todoSchema } from '@/schemas/todo-schema';
-import { useSuspenseQueries } from '@tanstack/react-query';
+import invariant from '@/utils/invariant';
+import { QueryClient, useSuspenseQueries } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
+import { LoaderFunctionArgs, useNavigate, useParams } from 'react-router-dom';
 import { z } from 'zod';
 
 const TodoDetailPage = () => {
@@ -64,5 +65,13 @@ const TodoDetailPage = () => {
     </TodoPageLayout>
   );
 };
+
+export const loader =
+  (queryClient: QueryClient) =>
+  async ({ params }: LoaderFunctionArgs) => {
+    invariant(params.todoId, 'No Todo ID provided');
+    await queryClient.ensureQueryData(todosOptions.detail(params.todoId));
+    return null;
+  };
 
 export default TodoDetailPage;
