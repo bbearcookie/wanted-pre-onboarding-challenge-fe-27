@@ -9,7 +9,7 @@ import TodoPageLayout from '@/layouts/todo-page-layout';
 import { todoSchema } from '@/schemas/todo-schema';
 import invariant from '@/utils/invariant';
 import { QueryClient, useSuspenseQueries } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { LoaderFunctionArgs, useNavigate, useParams } from 'react-router-dom';
 import { z } from 'zod';
@@ -20,6 +20,7 @@ const TodoDetailPage = () => {
   const navigate = useNavigate();
   const updateMutation = useUpdateTodoMutation();
   const deleteMutation = useDeleteTodoMutation();
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const [{ data: todos }, { data: todoDetail }] = useSuspenseQueries({
     queries: [todosOptions.list(), todosOptions.detail(todoId)],
@@ -69,6 +70,7 @@ const TodoDetailPage = () => {
   return (
     <TodoPageLayout todos={todos.data}>
       <TodoForm
+        disabled={!isEditMode}
         className="flex grow flex-col gap-4 p-4"
         form={todoForm}
         onSubmit={handleUpdate}
@@ -78,7 +80,24 @@ const TodoDetailPage = () => {
           <Button type="button" variant="destructive" onClick={handleDelete}>
             삭제
           </Button>
-          <Button>수정</Button>
+          {isEditMode && (
+            <Button
+              variant="outline"
+              type="button"
+              onClick={() => {
+                setIsEditMode((prev) => !prev);
+                todoForm.reset(todoDetail.data);
+              }}
+            >
+              취소
+            </Button>
+          )}
+          <Button
+            type={isEditMode ? 'button' : 'submit'}
+            onClick={() => setIsEditMode((prev) => !prev)}
+          >
+            {isEditMode ? '완료' : '수정'}
+          </Button>
         </section>
       </TodoForm>
     </TodoPageLayout>
